@@ -1,0 +1,12 @@
+financial_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: database
+      user: curso_user
+      password: curso_pass
+      port: 5432
+      dbname: curso_db
+      schema: public
+      threads: 1

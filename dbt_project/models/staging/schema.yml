@@ -1,0 +1,106 @@
+version: 2
+
+# ============================================================================
+# DEFINICIÓN DE SOURCES
+# ============================================================================
+sources:
+  - name: raw
+    description: "Datos crudos sin procesar desde archivos CSV"
+    database: curso_db
+    schema: public
+    tables:
+      - name: raw_transactions
+        description: "Tabla de staging con líneas CSV completas sin parsear"
+        columns:
+          - name: id
+            description: "ID autoincremental único del registro crudo"
+          - name: csvline
+            description: "Línea completa del archivo CSV original"
+          - name: createdat
+            description: "Timestamp de inserción en la base de datos"
+
+# ============================================================================
+# DEFINICIÓN DE MODELOS STAGING
+# ============================================================================
+models:
+  - name: stg_transactions
+    description: >
+      Modelo de staging que limpia y normaliza transacciones desde raw_transactions.
+      
+      Transformaciones aplicadas:
+      - Parseo de CSV a columnas estructuradas
+      - Normalización de fechas (yyyy-mm-dd y yyyy/mm/dd)
+      - Conversión de tipos de datos (amount a DECIMAL)
+      - Filtrado de registros con nulos críticos
+      - Categorización automática por palabras clave
+      - Detección de transacciones sospechosas
+      
+      Reglas de negocio:
+      - Transacciones >= $2000 se marcan como sospechosas
+      - Montos deben ser positivos
+      - Fecha, monto y descripción son obligatorios
+      
+    columns:
+      - name: id
+        description: "Identificador único de la transacción (surrogate key)"
+        tests:
+          - unique
+          - not_null
+      
+      - name: transaction_date
+        description: "Fecha de la transacción normalizada (formato DATE)"
+        tests:
+          - not_null
+      
+      - name: amount
+        description: "Monto de la transacción en moneda local (DECIMAL 12,2)"
+        tests:
+          - not_null
+      
+      - name: description
+        description: "Descripción textual de la transacción"
+        tests:
+          - not_null
+      
+      - name: category
+        description: "Categoría de la transacción asignada automáticamente"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: 
+                  - 'groceries'
+                  - 'housing'
+                  - 'transport'
+                  - 'food'
+                  - 'transfer'
+                  - 'online'
+                  - 'suspicious'
+                  - 'other'
+              config:
+                severity: warn
+      
+      - name: is_suspicious
+        description: "Indicador booleano de transacción sospechosa"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      
+      - name: original_line
+        description: "Línea CSV original para auditoría"
+        tests:
+          - not_null
+      
+      - name: ingested_at
+        description: "Timestamp de cuándo se ingirió la línea cruda"
+        tests:
+          - not_null
+      
+      - name: processed_at
+        description: "Timestamp de cuándo se procesó la transacción"
+        tests:
+          - not_null
+
+

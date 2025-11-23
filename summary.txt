@@ -1,0 +1,100 @@
+Parte 1: Resumen Ampliado del Temario
+Este curso está diseñado para desarrolladores experimentados en Java EE, JavaScript y Python que buscan integrar la IA como un "copiloto" estratégico en todas las fases del ciclo de vida del software (Fullstack + Data Engineering).
+
+
+1. Fundamentos de IA e Ingeniería de Prompts
+El curso comienza estableciendo las bases de la colaboración hombre-IA. Se enseña a diferenciar entre instrucciones, contexto y ejemplos para crear prompts efectivos. Se enfatiza la importancia de la iteración (refinamiento) y se abordan los riesgos de seguridad y sesgos al generar código automático.
+
+
+2. Data Engineering: Python y dbt (ELT Moderno)
+El bloque de datos se centra en la automatización de pipelines.
+
+
+dbt (Data Build Tool): Uso de Copilot para generar modelos .sql a partir de descripciones de negocio, creación automática de archivos schema.yml con tests y documentación, y definición de macros.
+
+
+Python: Creación de scripts ETL/ELT para apoyar a dbt, incluyendo validaciones de datos y funciones auxiliares documentadas automáticamente.
+
+
+
+
+SQL: Refactorización y optimización de consultas complejas y joins con asistencia de IA.
+
+3. Backend: Java EE (Enterprise Edition)
+Se trabaja sobre la versión 8 de Java EE, utilizando la IA para acelerar la arquitectura empresarial:
+
+
+Servicios REST: Generación de endpoints JAX-RS, DTOs y controladores REST.
+
+
+
+Persistencia (JPA): Creación de entidades con relaciones complejas (OneToMany, etc.), generación de Named Queries y JPQL, y patrones DAO/Repositorio.
+
+
+
+
+Refactorización: Modernización de servicios legacy y reestructuración de código para cumplir estándares de calidad.
+
+4. Frontend Moderno (Angular 19 y React 19)
+Aunque el curso cubre ambos frameworks, para tu caso nos enfocamos en lo aprendido sobre Angular 19:
+
+Generación de servicios con HttpClient conectados al backend Java.
+
+
+Creación de componentes, pipes, guards y formularios reactivos.
+
+Gestión de plantillas HTML con lógica condicional sugerida por la IA.
+
+5. Calidad, Testing y DevOps
+Este bloque transversal asegura que el código generado sea robusto y desplegable:
+
+
+Testing: Generación de tests unitarios (JUnit/Mockito) para Java y pruebas de frontend (Jasmine/Karma). Se integra con herramientas de calidad como SonarQube.
+
+
+
+
+Base de Datos: Automatización de scripts de migración (integración con Flyway o Liquibase) y validación de scripts destructivos.
+
+
+CI/CD: Configuración de workflows en GitHub Actions para automatizar pruebas y despliegues.
+
+Parte 2: Historia de Usuario Fullstack (Angular + Java + Data)
+Esta historia de usuario está diseñada para ejecutarse en tu Devcontainer (Postgres, Python, Payara, SonarQube, Flyway). Obliga al alumno a usar Prompts para conectar todas las piezas.
+
+Título de la Historia: "Dashboard Financiero: Ingesta, Procesamiento y Visualización de Transacciones"
+
+Como Analista Financiero, Quiero visualizar en la aplicación web un listado de transacciones bancarias que hayan sido previamente validadas y categorizadas automáticamente, Para detectar patrones de gasto sin tener que revisar los datos crudos (raw data) manualmente.
+
+Criterios de Aceptación Técnicos (Key Concepts del Temario)
+El alumno debe completar los siguientes pasos utilizando exclusivamente asistencia de GitHub Copilot para generar el código base:
+
+1. Capa de Datos (Postgres + Flyway + Python + dbt)
+
+
+Misión: El alumno debe usar un prompt para generar un script de migración de Flyway (V1__init_transactions.sql) que cree dos tablas: raw_transactions (datos sucios) y fact_transactions (datos limpios).
+
+
+Misión: Generar un script en Python que simule la ingesta de datos: debe leer un CSV corrupto y cargarlo en raw_transactions, documentando las funciones con docstrings automáticos.
+
+
+
+Misión: Crear un modelo dbt (.sql) que transforme los datos de raw a fact (limpiar nulos y categorizar gastos) y generar su schema.yml con tests automáticos.
+
+2. Capa Backend (Java EE + Payara + SonarQube)
+
+
+Misión: Utilizar Copilot para generar una Entidad JPA Transaction mapeada a la tabla fact_transactions creada por dbt.
+
+Misión: Generar un servicio JAX-RS (TransactionResource) que exponga los datos vía GET.
+
+
+Calidad (SonarQube): El código generado debe incluir un prompt de refactorización para asegurar que cumple las reglas de SonarQube (ej. evitar "Code Smells" en los controladores).
+
+3. Capa Frontend (Angular 19)
+
+
+Misión: Generar un Servicio Angular (TransactionService) que consuma el JSON del backend Java usando HttpClient.
+
+
+Misión: Crear un componente que muestre los datos en una tabla con estilos condicionales (ej. resaltar gastos altos en rojo), delegando la lógica de la plantilla a la IA.

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                                 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+
+    <!-- 
+        Unidad de Persistencia Principal para la aplicación PAC
+        
+        - Proveedor: EclipseLink (implementación JPA por defecto en Payara)
+        - Tipo de transacción: JTA (gestionada por el contenedor)
+        - DataSource: jdbc/financialPool (configurado en post-boot-commands.txt)
+        - Base de datos: PostgreSQL 13+ en el servicio 'database'
+        - Esquema: Gestionado por Flyway (migrations en db/migration/)
+    -->
+    <persistence-unit name="primary" transaction-type="JTA">
+        <!-- Proveedor JPA: EclipseLink es el proveedor por defecto en Payara -->
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        
+        <!-- DataSource configurado en Payara Server -->
+        <jta-data-source>jdbc/financialPool</jta-data-source>
+        
+        <!-- Entidades JPA del proyecto -->
+        <class>com.pac.entity.Transaction</class>
+        
+        <!-- Excluir clases no listadas explícitamente -->
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        
+        <properties>
+            <!-- =============================================== -->
+            <!-- CONFIGURACIÓN DE ESQUEMA Y VALIDACIÓN -->
+            <!-- =============================================== -->
+            
+            <!-- 
+                NO generar esquema automáticamente.
+                El esquema es gestionado por Flyway migrations.
+            -->
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+            
+            <!-- Validar el mapeo de entidades contra el esquema de BD -->
+            <property name="eclipselink.ddl-generation" value="none"/>
+            <property name="eclipselink.validate-existence" value="true"/>
+            
+            <!-- =============================================== -->
+            <!-- LOGGING Y DEBUG -->
+            <!-- =============================================== -->
+            
+            <!-- Nivel de logging de EclipseLink -->
+            <!-- Valores: OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL -->
+            <!-- Cambiar a FINE o FINER para debug detallado -->
+            <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            
+            <!-- Formatear SQL en logs para mejor legibilidad -->
+            <property name="eclipselink.logging.timestamp" value="true"/>
+            <property name="eclipselink.logging.thread" value="false"/>
+            <property name="eclipselink.logging.session" value="false"/>
+            <property name="eclipselink.logging.exceptions" value="true"/>
+            
+            <!-- =============================================== -->
+            <!-- CONFIGURACIÓN DE CACHÉ -->
+            <!-- =============================================== -->
+            
+            <!-- Tipo de caché compartido (L2) -->
+            <property name="eclipselink.cache.shared.default" value="true"/>
+            <property name="eclipselink.cache.type.default" value="SoftWeak"/>
+            <property name="eclipselink.cache.size.default" value="500"/>
+            
+            <!-- =============================================== -->
+            <!-- CONFIGURACIÓN DE TARGET DATABASE -->
+            <!-- =============================================== -->
+            
+            <!-- Especificar la plataforma de base de datos -->
+            <property name="eclipselink.target-database" value="PostgreSQL"/>
+            
+            <!-- =============================================== -->
+            <!-- OPTIMIZACIONES DE PERFORMANCE -->
+            <!-- =============================================== -->
+            
+            <!-- Usar preparación de statements para mejor performance -->
+            <property name="eclipselink.jdbc.cache-statements" value="true"/>
+            <property name="eclipselink.jdbc.cache-statements.size" value="50"/>
+            
+            <!-- Flush automático antes de queries -->
+            <property name="eclipselink.persistence-context.flush-mode" value="AUTO"/>
+            
+            <!-- Estrategia de lectura -->
+            <property name="eclipselink.jdbc.read-connections.min" value="1"/>
+            <property name="eclipselink.jdbc.read-connections.max" value="5"/>
+        </properties>
+    </persistence-unit>
+</persistence>

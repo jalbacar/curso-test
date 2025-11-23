@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//Payara.fish//DTD Payara Server 4 Resource Definitions//EN" "https://raw.githubusercontent.com/payara/Payara-Server-Documentation/master/schemas/payara-resources_1_6.dtd">
+<resources>
+    <!-- Pool de conexiones a Postgres -->
+    <jdbc-connection-pool name="financialPool"
+                          datasource-classname="org.postgresql.ds.PGSimpleDataSource"
+                          res-type="javax.sql.DataSource">
+        <property name="serverName" value="database"/>
+        <property name="portNumber" value="5432"/>
+        <property name="databaseName" value="curso_db"/>
+        <property name="user" value="curso_user"/>
+        <property name="password" value="curso_pass"/>
+    </jdbc-connection-pool>
+
+    <!-- Recurso JNDI que busca el persistence.xml -->
+    <jdbc-resource enabled="true"
+                   jndi-name="jdbc/financialPool"
+                   object-type="user"
+                   pool-name="financialPool"/>
+</resources>

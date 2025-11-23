@@ -1,0 +1,10 @@
+date,amount,description
+2023-10-01,150.50,Compra Supermercado
+2023-10-02,2500.00,Transferencia Sospechosa
+2023-10-03,,Error Importe Nulo
+2023/10/04,50.20,Formato Fecha Incorrecto
+2023-10-05,1200.00,Pago Alquiler
+2023-10-06,15.00,Uber Trayecto
+,100.00,Fecha Faltante
+2023-10-08,9999.99,Posible Fraude Online
+2023-10-09,45.50,Cena Restaurante

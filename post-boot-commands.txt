@@ -1,0 +1,2 @@
+create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property serverName=database:portNumber=5432:databaseName=curso_db:user=curso_user:password=curso_pass financialPool
+create-jdbc-resource --connectionpoolid financialPool jdbc/financialPool

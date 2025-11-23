@@ -1,0 +1,61 @@
+{
+  "name": "Curso Full-Stack IA (Java EE + Python + Angular/React)",
+
+  // 1. Le decimos que use Docker Compose para orquestar
+  "dockerComposeFile": "docker-compose-alumnos.yml",
+
+  // 2. Le decimos a qué servicio (definido en docker-compose) debe conectarse VS Code
+  "service": "devcontainer",
+
+  // 3. La carpeta que se abrirá dentro del contenedor
+  "workspaceFolder": "/workspace",
+
+  // 4. Extensiones que se instalarán automáticamente en el VS Code del asistente
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // --- Copilot (Obligatorio) ---
+        "github.copilot",
+        "github.copilot-chat",
+
+        // --- Día 1: Python + DBT [cite: 18] ---
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "innoverio.vscode-dbt-power-user",
+        
+        // --- Día 2: Java EE 8 [cite: 25, 26, 36] ---
+        "vscjava.vscode-java-pack",
+        "redhat.java",
+        "payara.vscode-payara",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-maven",
+
+        // --- Día 3: Front-End (Angular/React) [cite: 54, 61] ---
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "angular.ng-template",
+        "dsznajder.es7-react-js-snippets",
+
+        // --- Día 4: QA y DevOps [cite: 74, 84] ---
+        "redhat.vscode-yaml",
+        "github.vscode-github-actions",
+        "sonarsource.sonarlint-vscode",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+
+  // 5. Redirecciona puertos del contenedor al host (localhost)
+  "forwardPorts": [
+    8080, // Puerto de la app Java EE [cite: 32]
+    4848, // Admin de Payara
+    9000, // SonarQube [cite: 74]
+    5432, // PostgreSQL
+    4200, // Angular [cite: 61]
+    3000  // React (típico) [cite: 54]
+  ],
+  
+  // 6. Comando a ejecutar después de que el contenedor se cree
+  // Instala dependencias de Python y se asegura de que el usuario 'vscode' sea propietario
+  "postCreateCommand": "pip install -r requirements.txt && sudo chown -R vscode:vscode /workspace"
+}

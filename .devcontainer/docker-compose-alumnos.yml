@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # 1. El contenedor principal donde trabajará el alumno
+  devcontainer:
+    image: jalbacar/curso-copilot:v1
+    
+    # Mantiene el contenedor vivo
+    command: sleep infinity
+    
+    # Monta el código del curso (la carpeta superior '..') dentro de /workspace
+    volumes:
+      - ..:/workspace:cached
+    
+    # Conecta este contenedor a los otros servicios
+    depends_on:
+      - database
+      - appserver
+      - sonarqube
+
+  # 2. El servidor de aplicaciones Java EE 8 (Payara 5) 
+  appserver:
+    image: payara/server-full:5.2022.5-jdk11
+    ports:
+      - "8080:8080"  # Puerto de la app
+      - "4848:4848"  # Puerto de admin
+    volumes:
+      - ..:/workspace:cached
+      # Despliegue automático: copiar WAR a autodeploy
+      - ../target/javaee-app.war:/opt/payara/deployments/javaee-app.war:ro
+    environment:
+      # Configuración de memoria JVM
+      - JVM_ARGS=-Xms512m -Xmx1024m
+
+  # 3. El servicio de Base de Datos (PostgreSQL)
+  database:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: curso_user
+      POSTGRES_PASSWORD: curso_pass
+      POSTGRES_DB: curso_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # 4. El servidor SonarQube [cite: 74]
+  sonarqube:
+    image: sonarqube:lts-community
+    ports:
+      - "9000:9000"
+    environment:
+      # Deshabilita chequeos de ElasticSearch para entorno dev
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+
+volumes:
+  # Volumen persistente para la base de datos
+  postgres-data:

@@ -1,0 +1,28 @@
+{
+  "individualResults": [
+    {
+      "initialSchemaVersion": "1",
+      "targetSchemaVersion": "2",
+      "schemaName": "public",
+      "migrations": [
+        {
+          "category": "Versioned",
+          "version": "2",
+          "description": "add createdat column",
+          "type": "SQL",
+          "filepath": "/workspace/./db/migration/V2__add_createdat_column.sql",
+          "executionTime": 26
+        }
+      ],
+      "migrationsExecuted": 1,
+      "success": true,
+      "flywayVersion": "9.22.3",
+      "database": "curso_db",
+      "warnings": [],
+      "timestamp": "2025-11-23T15:01:15.973891237",
+      "operation": "migrate",
+      "exception": null,
+      "licenseFailed": false
+    }
+  ]
+}

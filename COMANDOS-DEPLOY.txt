@@ -1,0 +1,61 @@
+# ═══════════════════════════════════════════════════════
+# COMANDOS INDIVIDUALES PARA WINDOWS CMD
+# ═══════════════════════════════════════════════════════
+
+# ──────────────────────────────────────────────────────
+# PASO 1: Configurar DataSource
+# ──────────────────────────────────────────────────────
+
+# Crear JDBC Connection Pool
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property serverName=database:portNumber=5432:databaseName=curso_db:user=curso_user:password=curso_pass financialPool
+
+# Crear JDBC Resource
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile create-jdbc-resource --connectionpoolid financialPool jdbc/financialPool
+
+# Probar conexion
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile ping-connection-pool financialPool
+
+# ──────────────────────────────────────────────────────
+# PASO 2: Desplegar Aplicación
+# ──────────────────────────────────────────────────────
+
+# Copiar WAR al contenedor
+docker cp target\javaee-app.war pac_devcontainer-appserver-1:/tmp/javaee-app.war
+
+# Desplegar
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile deploy --force=true --name javaee-app --contextroot / /tmp/javaee-app.war
+
+# ──────────────────────────────────────────────────────
+# PASO 3: Verificar
+# ──────────────────────────────────────────────────────
+
+# Listar aplicaciones
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile list-applications
+
+# Probar endpoint
+curl http://localhost:8080/api/transactions
+
+# ═══════════════════════════════════════════════════════
+# ALTERNATIVA: Comando TODO EN UNO (copy/paste directo)
+# ═══════════════════════════════════════════════════════
+
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property serverName=database:portNumber=5432:databaseName=curso_db:user=curso_user:password=curso_pass financialPool && docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile create-jdbc-resource --connectionpoolid financialPool jdbc/financialPool && docker cp target\javaee-app.war pac_devcontainer-appserver-1:/tmp/javaee-app.war && docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile deploy --force=true --name javaee-app --contextroot / /tmp/javaee-app.war && timeout /t 8 && curl http://localhost:8080/api/transactions
+
+# ═══════════════════════════════════════════════════════
+# TROUBLESHOOTING
+# ═══════════════════════════════════════════════════════
+
+# Ver logs del servidor
+docker exec pac_devcontainer-appserver-1 tail -50 /opt/payara/appserver/glassfish/domains/domain1/logs/server.log
+
+# Verificar DataSource
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile list-jdbc-resources
+
+# Verificar que PostgreSQL funciona
+docker exec pac_devcontainer-database-1 psql -U curso_user -d curso_db -c "SELECT version();"
+
+# Undeployar aplicación
+docker exec pac_devcontainer-appserver-1 /opt/payara/appserver/bin/asadmin --user admin --passwordfile /opt/payara/passwordFile undeploy javaee-app
+
+# Reiniciar Payara
+docker restart pac_devcontainer-appserver-1
